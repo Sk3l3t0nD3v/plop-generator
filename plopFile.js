@@ -18,5 +18,5 @@ module.exports = (plop) => {
   // controller generator
   plop.setGenerator('[Backend] create project MVC', backendGen.createProject);
   plop.setGenerator('[Backend] add file to project ', backendGen.addFile);
-  plop.setGenerator('[Frontend] add packages to project ', npmGen);
+  plop.setGenerator('[Frontend] add NPM packages to project ', npmGen);
 };
