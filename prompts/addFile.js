@@ -10,7 +10,6 @@ module.exports = [
         message: 'Seleziona la cartella dove creare il file',
         basePath: './',
       },
-      { type: 'input', name: 'name', message: 'Scegli il nome del file' },
       {
         when: (context) => context.path.includes('controllers'),
         type: 'list',
@@ -54,6 +53,12 @@ module.exports = [
           { name: 'DataBase', value: 'DbException' },
           { name: 'Base', value: 'BaseException' },
         ],
+      },
+      {
+        when: (context) => Object.values(context)[1].includes('Base'),
+        type: 'input',
+        name: 'name',
+        message: 'Nome file :',
       },
     ],
   },

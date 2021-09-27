@@ -4,7 +4,7 @@ const inquirerRecursive = require('inquirer-recursive/node_modules/inquirer');
 
 inquirerRecursive.registerPrompt('directory', require('inquirer-directory'));
 
-module.exports = function (plop) {
+module.exports = (plop) => {
   plop.setPrompt('recursive', recursive);
   //HELPER
   plop.setHelper('addSlash', (txt) => '\\' + txt);
