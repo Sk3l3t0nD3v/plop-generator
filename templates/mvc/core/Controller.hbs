@@ -1,0 +1,22 @@
+<?php
+
+
+namespace app\core;
+
+
+class Controller
+{
+    protected array $middelwares = [];
+    function __construct()
+    {
+    }
+
+    function addMiddelware(array $middelwares)
+    {
+        $this->middelwares = array_merge($this->middelwares, $middelwares);
+    }
+    public function getMiddelware(): array
+    {
+        return $this->middelwares;
+    }
+}

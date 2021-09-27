@@ -1,0 +1,16 @@
+<?php
+
+
+
+namespace app\exceptions;
+
+
+class NotFoundException extends \Exception
+{
+    protected $message;
+
+    function __construct(string $message)
+    {
+        $this->message =  json_encode(['error' => true, 'message' => $message]);
+    }
+}

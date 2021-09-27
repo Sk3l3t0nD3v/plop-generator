@@ -1,0 +1,20 @@
+<?php
+
+namespace app\controllers;
+
+use app\core\Controller;
+use app\core\Request;
+use app\middelwares\AuthMiddelware;
+
+class AuthController extends Controller
+{
+    function __construct(Request $request)
+    {
+        $this->addMiddelware(new AuthMiddelware($request));
+    }
+
+    public function auth()
+    {
+
+    }
+}

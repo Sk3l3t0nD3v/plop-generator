@@ -1,0 +1,35 @@
+<?php
+
+
+namespace app\core;
+
+use app\exceptions\DbException;
+use PDO;
+use PDOException;
+use PDOStatement;
+
+class Database
+{
+    private PDO $pdo;
+    function __construct($config)
+    {
+        extract($config);
+        $this->pdo = new PDO($dns, $user, $password);
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+
+    public function prepare(string $sql): PDOStatement|false
+    {
+        return $this->pdo->prepare($sql);
+    }
+
+    public function isExecute(PDOStatement $stm): array|bool
+    {
+        try {
+            $stm->execute();
+            return true;
+        } catch (PDOException $e) {
+            return (new DbException($e))->getMessage();
+        }
+    }
+}

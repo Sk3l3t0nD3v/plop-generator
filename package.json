@@ -1,0 +1,11 @@
+{
+    "scripts": {
+        "plop": "plop"
+    },
+    "dependencies": {
+        "inquirer": "^8.1.5",
+        "inquirer-directory": "^2.2.0",
+        "inquirer-recursive": "0.0.7",
+        "plop": "^2.7.4"
+    }
+}

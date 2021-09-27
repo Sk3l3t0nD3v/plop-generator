@@ -1,0 +1,32 @@
+<?php
+
+
+namespace app\models;
+
+use app\core\Application;
+use app\core\Model;
+
+class {{className}} extends Model
+{
+
+    public string $field = '';
+    const COLUMNS = [];
+    const TABLE_NAME = "";
+
+    function __construct(string $action = '')
+    {
+        $this->action = $action;
+    }
+
+    public function rules(): array
+    {
+        $rules = [
+        'field' => [self::RULE_REQUIRED],
+        'field' => [self::RULE_REQUIRED],
+        'field' => [self::RULE_REQUIRED, self::RULE_EMAIL],
+        'field' => [self::RULE_REQUIRED, [self::RULE_MIN, 'min' => 3], [self::RULE_MAX, 'max' => 12]],
+        'field' => [self::RULE_REQUIRED, [self::RULE_MATCH, 'match' => 'password']],
+        ];
+        return $rules;
+    }
+}

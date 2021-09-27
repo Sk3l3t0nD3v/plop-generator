@@ -1,0 +1,28 @@
+<?php
+
+
+namespace app\middelwares;
+
+use app\core\Middelware;
+use app\core\Request;
+use app\exceptions\AuthException;
+use app\models\User;
+
+class AdminMiddelware extends Middelware
+{
+    protected Request $request;
+    function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
+
+    public function execute(User $user)
+    {
+        return $user->role == 'admin' ? $user : $this->showError();
+    }
+    private function showError()
+    {
+        throw new AuthException('Not Admin ');
+        exit();
+    }
+}

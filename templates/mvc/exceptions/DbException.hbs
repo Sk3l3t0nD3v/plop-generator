@@ -1,0 +1,30 @@
+<?php
+
+namespace app\exceptions;
+
+class DbException
+{
+    private array $error = ['error' => true, 'message' => ''];
+    function __construct(\PDOException $e)
+    {
+        $message = $e->getMessage();
+
+        switch ($message) {
+            case str_contains($message, 'uniq_username'):
+                $this->error['message'] =  'Username non disponibile';
+                break;
+
+            case str_contains($message, 'uniq_email'):
+                $this->error['message'] =  'Email non disponibile';
+                break;
+
+            default:
+                $this->error['message'] =  'errore nella query';
+                break;
+        }
+    }
+    public function getMessage(): array
+    {
+        return $this->error;
+    }
+}

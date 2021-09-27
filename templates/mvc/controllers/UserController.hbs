@@ -1,0 +1,41 @@
+<?php
+
+namespace app\controllers;
+
+use app\core\Application;
+use app\core\Controller;
+use app\core\Request;
+use app\models\User;
+
+class UserController extends Controller
+{
+    function __construct()
+    {
+    }
+
+    public function login(Request $request)
+    {
+
+        if ($request->isPost()) {
+            $user = new User('login');
+            $user->loadData($request->getBody());
+            if ($user->validate() && $loginState = $user->login())
+                Application::$app->response->jsonResponse($loginState);
+            else
+                Application::$app->response->jsonResponse($user->errors);
+        }
+    }
+    public function register(Request $request)
+    {
+        if ($request->isPost()) {
+            $user = new User();
+            $user->loadData($request->getBody());
+
+            if ($user->validate() && $registerState = $user->register())
+                Application::$app->response->jsonResponse($registerState);
+            else
+                Application::$app->response->jsonResponse($user->errors);
+            exit();
+        }
+    }
+}

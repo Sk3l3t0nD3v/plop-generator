@@ -1,0 +1,74 @@
+<?php
+
+
+namespace app\core;
+
+use app\exceptions\NotFoundException;
+
+abstract class Model extends Database
+{
+    public const RULE_REQUIRED = 'required';
+    public const RULE_EMAIL = 'email';
+    public const RULE_MAX = 'max';
+    public const RULE_MIN = 'min';
+    public const RULE_MATCH = 'match';
+
+    function __construct()
+    {
+    }
+    public array $errors = [];
+
+    abstract function rules(): array;
+
+    public function loadData($data)
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            } else {
+                throw new NotFoundException('Field not found');
+                exit();
+            }
+        }
+    }
+
+    public function validate()
+    {
+        foreach ($this->rules() as $field => $rules) {
+
+            $value = $this->{$field};
+
+            foreach ($rules as $rule) {
+                $ruleName = $rule;
+                if (!is_string($ruleName)) $ruleName = $rule[0];
+
+                if ($ruleName === self::RULE_REQUIRED && !$value && !is_bool($value)) $this->addError($field, self::RULE_REQUIRED);
+                if ($ruleName === self::RULE_MIN && strlen($value) < $rule['min']) $this->addError($field, self::RULE_MIN, $rule);
+                if ($ruleName === self::RULE_MAX && strlen($value) > $rule['max']) $this->addError($field, self::RULE_MAX, $rule);
+                if ($ruleName === self::RULE_MATCH && $value !== $this->{$rule['match']}) $this->addError($field, self::RULE_MATCH, $rule);
+                if ($ruleName === self::RULE_EMAIL && !filter_var($value, FILTER_VALIDATE_EMAIL)) $this->addError($field, self::RULE_EMAIL);
+            }
+        }
+        return empty($this->errors);
+    }
+
+    public function addError(string $field, string $rule, $params = [])
+    {
+        $message = $this->errorMessage()[$rule] ?? '';
+        foreach ($params as $key => $value) {
+            $message = str_replace("{{$key}}", $value, $message);
+        }
+        $this->errors = ["error" => true, "message" => $field . " " . $message];
+    }
+
+    public function errorMessage()
+    {
+        return [
+            self::RULE_REQUIRED => 'Campo obbligatorio',
+            self::RULE_EMAIL => 'Email non valida',
+            self::RULE_MIN => 'Minimo {min}',
+            self::RULE_MAX => 'Massimo {max}',
+            self::RULE_MATCH => 'Conferma password e {match} non coincidono',
+        ];
+    }
+}

@@ -1,0 +1,65 @@
+<?php
+
+
+namespace app\models;
+
+use app\core\Application;
+use app\core\JwtAuth;
+use app\core\Model;
+
+class User extends Model
+{
+
+    public string $firstname = '';
+    public string $lastname = '';
+    public string $email = '';
+    public string $password = '';
+    public string $confirmPassword = '';
+    const COLUMNS = ['firstname', 'lastname', 'email', 'password'];
+    const TABLE_NAME = "user";
+
+    function __construct(string $action = '')
+    {
+        $this->action = $action;
+    }
+
+    public function login()
+    {
+        return JwtAuth::createUserToken($this->firstname, $this->password);
+    }
+
+
+    public function register(): array|null
+    {
+        $db = Application::$app->database;
+        $columns = implode(',', self::COLUMNS);
+        $values = implode(',', array_map(fn ($value) => ":$value", self::COLUMNS));
+        $stm = $db->prepare("INSERT INTO " . self::TABLE_NAME . " ($columns)  VALUES($values)");
+
+        foreach (self::COLUMNS as $column) {
+            $this->{$column} = $column === 'password' ? password_hash($this->{$column}, PASSWORD_DEFAULT) : $this->{$column};
+            $stm->bindValue(":$column", $this->{$column});
+        }
+
+        return $db->isExecute($stm) === true ? ['error' => false, 'message' => 'User creato'] : $db->isExecute($stm);
+    }
+
+    public function rules(): array
+    {
+        if ($this->action === 'login') {
+            $rules = [
+                'firstname' => [self::RULE_REQUIRED],
+                'password' => [self::RULE_REQUIRED, [self::RULE_MIN, 'min' => 3], [self::RULE_MAX, 'max' => 12]],
+            ];
+        } else
+            $rules = [
+                'firstname' => [self::RULE_REQUIRED],
+                'lastname' => [self::RULE_REQUIRED],
+                'email' => [self::RULE_REQUIRED, self::RULE_EMAIL],
+                'password' => [self::RULE_REQUIRED, [self::RULE_MIN, 'min' => 3], [self::RULE_MAX, 'max' => 12]],
+                'confirmPassword' => [self::RULE_REQUIRED, [self::RULE_MATCH, 'match' => 'password']],
+            ];
+
+        return $rules;
+    }
+}

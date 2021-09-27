@@ -1,0 +1,19 @@
+<?php
+
+ini_set('display_errors', 1);
+require_once __DIR__ . "/../vendor/autoload.php";
+
+{{#each controllers}}
+use app\controllers{{addSlash this}};
+{{/each}}
+use app\core\Application;
+
+$app = new Application(dirname(__DIR__));
+
+{{#if user}}$app->router->post('/login', [UserController::class, 'login']);
+$app->router->post('/register', [UserController::class, 'register']);{{/if}}
+{{#if auth}}$app->router->post('/auth', [AuthController::class, 'auth']);{{/if}}
+
+$app->run();
+
+

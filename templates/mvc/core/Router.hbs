@@ -1,0 +1,55 @@
+<?php
+
+namespace app\core;
+
+
+class Router
+{
+    protected array $routes = array();
+
+    function __construct(public Request $request)
+    {
+    }
+
+    function resolve()
+    {
+        $user = null;
+        $path = $this->request->getPath();
+        $method = $this->request->method();
+        if (!isset($this->routes[$method][$path])) {
+            Application::$app->response->setStatusCode(404);
+            return 'Route Not Found';
+        }
+        $callback = $this->routes[$method][$path]['callback'] ?? false;
+        $middelwares = $this->routes[$method][$path]['middelwares'];
+
+        if ($callback === false) {
+            Application::$app->response->setStatusCode(404);
+            return 'Not Found';
+        }
+        if (is_array($callback)) {
+
+            $callback[0] = Application::$app->controller = new $callback[0]($this->request);
+
+            if (count($middelwares) > 0) {
+                foreach ($middelwares as $middelware)
+                    $user = (new $middelware($this->request))->execute($user);
+            }
+        }
+
+        call_user_func($callback, $user);
+    }
+
+
+    function get(string $path, array $controllers, array $middelwares = [])
+    {
+        $this->routes['get'][$path]['callback'] = $controllers;
+        $this->routes['get'][$path]['middelwares'] = $middelwares;
+    }
+    function post($path, array $controllers, array $middelwares = [])
+    {
+
+        $this->routes['post'][$path]['callback'] = $controllers;
+        $this->routes['post'][$path]['middelwares'] = $middelwares;
+    }
+}

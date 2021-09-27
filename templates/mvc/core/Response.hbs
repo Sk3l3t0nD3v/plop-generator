@@ -1,0 +1,26 @@
+<?php
+
+
+namespace app\core;
+
+
+class Response
+{
+    function __construct()
+    {
+    }
+
+    public function setStatusCode(int $status)
+    {
+        http_response_code($status);
+    }
+    function redirect($url)
+    {
+        header('Location: ' . $url);
+        exit;
+    }
+    public function jsonResponse(array $json)
+    {
+        echo json_encode($json);
+    }
+}

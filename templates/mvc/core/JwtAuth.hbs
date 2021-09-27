@@ -1,0 +1,68 @@
+<?php
+
+namespace app\core;
+
+use app\exceptions\NotFoundException;
+use \PDO;
+
+
+require_once __DIR__ . "/../vendor/jwt/jwt.php";
+
+class JwtAuth
+{
+
+    static private $secretKey = "test123";
+
+    function __construct()
+    {
+    }
+    static function createUserToken(string $username, string $password)
+    {
+        $db = Application::$app->database;
+
+        $stm = $db->prepare("SELECT * from user where username = :username ");
+        $stm->bindValue(":username", $username);
+        $query = $db->isExecute($stm);
+        if ($query === true) {
+
+            $user = $stm->fetch(PDO::FETCH_ASSOC);
+            if ($user && password_verify($password, $user['password'])) {
+
+                $token = self::makeToken($user['id']);
+                return array('token' => $token, 'username' => $user['username'], 'role' => $user['role']);
+            }
+            throw new NotFoundException('User not found');
+        }
+        return $query;
+    }
+
+    static function makeToken(int $userId): string
+    {
+
+        $payload = [
+            "iat" => time(),
+            "iss" => "localhost",
+            "exp" => time() + (6 * 60 * 60 * 1),
+            "userId" => $userId
+        ];
+
+        $token = JWT::encode($payload, self::$secretKey);
+        return $token;
+    }
+    static function isAuth(string $token)
+    {
+        try {
+            $decode = JWT::decode($token, self::$secretKey, ['HS256']);
+            $userId = $decode->userId;
+            $db = Application::$app->database;
+
+            $stm = $db->prepare("SELECT * FROM user where id =:userId");
+            $stm->bindValue(':userId', $userId);
+            $db->isExecute($stm);
+            return $stm->rowCount() ? $stm->fetch(PDO::FETCH_ASSOC) : false;
+        } catch (\Exception $e) {
+            echo "Error:" . $e->getMessage();
+            return false;
+        }
+    }
+}
