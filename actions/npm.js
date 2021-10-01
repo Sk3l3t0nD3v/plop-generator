@@ -1,26 +1,34 @@
 const path = require('path');
-module.exports = ({ package, module, where }) => {
+module.exports = ({ packages, module, where }) => {
   const actions = [];
-  const rootAppPath = path.resolve(__dirname + '/../src/app');
-  console.log(`${rootAppPath}/${where}`);
-  actions.push({
-    type: 'npmInstallPackages',
-    install: package,
-  });
+  console.log(packages);
+  packages.forEach((package) => {
+    let { pk, md } = package;
+    if (package.pk.includes('material')) md = module;
 
-  //insert module inported to module of app
-  actions.push({
-    type: 'modify',
-    path: `${rootAppPath}/${where}`,
-    pattern: /;/m,
-    template: ";\r\nimport { {{module}} } from '{{package}}';",
+    const rootAppPath = path.resolve(__dirname + '/../src/app');
+    console.log(`${rootAppPath}/${where}`);
+    console.log(`${pk}/${md}`);
+    /*  actions.push({
+      type: 'npmInstallPackages',
+      install: pk,
+    }); */
+
+    //insert module inported to module of app
+    actions.push({
+      type: 'modify',
+      path: `${rootAppPath}/${where}`,
+      pattern: /;/m,
+      template: `;\r\nimport { ${md} } from '${pk}';`,
+    });
+    actions.push({
+      type: 'modify',
+      path: `${rootAppPath}/${where}`,
+      pattern: /imports: \[/g,
+      template: `imports: [ \r\n ${md},`,
+    });
   });
-  actions.push({
-    type: 'modify',
-    path: `${rootAppPath}/${where}`,
-    pattern: /imports: \[/g,
-    template: `imports: [ \r\n ${module},`,
-  });
+  console.log(actions);
   return actions;
 };
 

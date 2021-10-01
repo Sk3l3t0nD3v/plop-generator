@@ -1,17 +1,35 @@
 module.exports = [
   {
-    name: 'package',
+    name: 'packages',
     type: 'checkbox',
     choices: [
-      { name: '[Angular] Add Formly', value: '@ngx-formly/core' },
-      { name: '[Angular] Add Material', value: '@angular/material' },
+      {
+        name: '[Angular] Add Formly',
+        value: { pk: '@ngx-formly/core', md: 'FormlyModule' },
+      },
+      {
+        name: '[Angular] Add Material',
+        value: { pk: '@angular/material' },
+      },
       {
         name: '[Angular] Syncfusion Grids',
-        value: '@syncfusion/ej2-angular-grids',
+        value: { pk: '@syncfusion/ej2-angular-grids', md: 'GridModule' },
       },
-      { name: '[Angular] Add Apex Charts', value: 'ng-apexcharts' },
-      { name: '[Angular] Add Strars Rating', value: 'ng-starrating' },
-      { name: '[Ionic] Add Storage Angular', value: '@ionic/storage-angular' },
+      {
+        name: '[Angular] Add Apex Charts',
+        value: { pk: 'ng-apexcharts', md: 'NgApexchartsModule' },
+      },
+      {
+        name: '[Angular] Add Strars Rating',
+        value: { pk: 'ng-starrating', md: 'RatingModule' },
+      },
+      {
+        name: '[Ionic] Add Storage Angular',
+        value: {
+          pk: '@ionic/storage-angular',
+          md: `IonicStorageModule`,
+        },
+      },
     ],
     validate: (input) => {
       if (/.+/.test(input)) {
@@ -21,9 +39,9 @@ module.exports = [
     },
   },
   {
-    when: (context) => angularPackageFound(context.package[0]),
+    when: (context) => angularMaterialPackageFound(context.packages),
     name: 'module',
-    message: 'Inserisci il nome del modulo da importare :',
+    message: 'Inserisci il nome del modulo di Material da importare :',
     type: 'input',
     validate: (input) => {
       if (/.+/.test(input)) {
@@ -33,7 +51,6 @@ module.exports = [
     },
   },
   {
-    when: (context) => angularPackageFound(context.package[0]),
     name: 'where',
     message: 'Dove vuoi importare il modulo ex:profile/profile.module.ts?',
     type: 'input',
@@ -41,10 +58,9 @@ module.exports = [
   },
 ];
 
-const angularPackageFound = (package) => {
-  if (!package) return false;
-  const modules = ['angular', 'ionic', '@ngx', 'ng-'];
-  const found =
-    modules.filter((m) => package.includes(m)).length > 0 ? true : false;
+const angularMaterialPackageFound = (packages) => {
+  if (!packages) return false;
+  const found = packages.filter((package) => package.pk.includes('material'));
+  //modules.filter((m) => packages.includes(m)).length > 0 ? true : false;
   return found;
 };
