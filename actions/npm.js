@@ -1,18 +1,16 @@
-const path = require('path');
-module.exports = ({ packages, module, where }) => {
+module.exports = ({ packages, module, where, path }) => {
   const actions = [];
-  console.log(packages);
+
   packages.forEach((package) => {
     let { pk, md } = package;
     if (package.pk.includes('material')) md = module;
 
-    const rootAppPath = path.resolve(__dirname + '/../src/app');
-    console.log(`${rootAppPath}/${where}`);
-    console.log(`${pk}/${md}`);
-    /*  actions.push({
+    const rootAppPath = path;
+    actions.push({
       type: 'npmInstallPackages',
       install: pk,
-    }); */
+      pathToinstall: process.cwd() + '/' + path,
+    });
 
     //insert module inported to module of app
     actions.push({
@@ -28,7 +26,6 @@ module.exports = ({ packages, module, where }) => {
       template: `imports: [ \r\n ${md},`,
     });
   });
-  console.log(actions);
   return actions;
 };
 

@@ -52,15 +52,20 @@ module.exports = [
   },
   {
     name: 'where',
-    message: 'Dove vuoi importare il modulo ex:profile/profile.module.ts?',
+    message: 'Dove vuoi importare il modulo ex: profile/profile.module.ts?',
     type: 'input',
-    default: 'app.module.ts',
+    default: 'src/app/app.module.ts',
+  },
+  {
+    type: 'directory',
+    name: 'path',
+    message: 'Seleziona la cartella root del progetto ',
+    basePath: './',
   },
 ];
 
 const angularMaterialPackageFound = (packages) => {
   if (!packages) return false;
   const found = packages.filter((package) => package.pk.includes('material'));
-  //modules.filter((m) => packages.includes(m)).length > 0 ? true : false;
-  return found;
+  return found.length > 0 ? true : false;
 };

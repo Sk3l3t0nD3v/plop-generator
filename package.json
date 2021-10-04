@@ -1,4 +1,6 @@
 {
+    "name": "plop-manager",
+    "version": "1.0.0",
     "scripts": {
         "plop": "plop"
     },

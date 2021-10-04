@@ -5,6 +5,17 @@ module.exports = [
     message: 'Nome progetto',
   },
   {
+    type: 'input',
+    name: 'projectAbsolutePath',
+    message: 'Inserisci il path assoluto della cartella del progetto',
+    validate: (input) => {
+      if (/.+/.test(input)) {
+        return true;
+      }
+      return 'Path obbligatorio';
+    },
+  },
+  {
     type: 'confirm',
     name: 'isMVC',
     message: 'Vuoi usare il pattern MVC ??',
