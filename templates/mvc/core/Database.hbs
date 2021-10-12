@@ -14,6 +14,9 @@ class Database
     function __construct($config)
     {
         extract($config);
+        /** @var string $dns */
+        /** @var string $user */
+        /** @var string $password */
         $this->pdo = new PDO($dns, $user, $password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
@@ -23,13 +26,13 @@ class Database
         return $this->pdo->prepare($sql);
     }
 
-    public function isExecute(PDOStatement $stm): array|bool
+    public function isExecute(PDOStatement $stm): DbException|bool
     {
         try {
             $stm->execute();
             return true;
         } catch (PDOException $e) {
-            return (new DbException($e))->getMessage();
+            return new DbException($e);
         }
     }
 }

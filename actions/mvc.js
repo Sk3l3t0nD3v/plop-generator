@@ -6,7 +6,7 @@ module.exports = function (data) {
     isMVC,
     core,
     jwt,
-    middelware,
+    middleware,
     controller,
     model,
     exception,
@@ -27,9 +27,9 @@ module.exports = function (data) {
       actions.push(
         ...addExceptionPages(projectName, projectAbsolutePath, exception),
       );
-    middelware.length > 0 &&
+    middleware.length > 0 &&
       actions.push(
-        ...addMiddelwarePages(projectName, projectAbsolutePath, middelware),
+        ...addMiddlewarePages(projectName, projectAbsolutePath, middleware),
       );
     if (core.includes('Database')) {
       actions.push({
@@ -98,11 +98,11 @@ const addExceptionPages = (projectName, projectAbsolutePath, exception) => {
     abortOnFail: true,
   }));
 };
-const addMiddelwarePages = (projectName, projectAbsolutePath, middelware) => {
-  return middelware.map((m) => ({
+const addMiddlewarePages = (projectName, projectAbsolutePath, middleware) => {
+  return middleware.map((m) => ({
     type: 'add',
-    path: `${projectAbsolutePath}/${projectName}/middelwares/${m}.php`,
-    templateFile: `templates/mvc/middelwares/${m}.hbs`,
+    path: `${projectAbsolutePath}/${projectName}/middlewares/${m}.php`,
+    templateFile: `templates/mvc/middlewares/${m}.hbs`,
     abortOnFail: true,
   }));
 };

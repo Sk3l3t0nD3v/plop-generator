@@ -1,33 +1,40 @@
 <?php
 
 
-namespace app\middelwares;
+namespace app\middlewares;
 
 use app\core\JwtAuth;
-use app\core\Middelware;
+use app\core\Middleware;
 use app\core\Request;
 use app\exceptions\AuthException;
 use app\models\User;
 
-class AuthMiddelware extends Middelware
+class AuthMiddleware extends Middleware
 {
     protected Request $request;
+
+    /**
+     * @param Request $request
+     */
     function __construct(Request $request)
     {
         $this->request = $request;
     }
 
-    public function execute(User $userAuth)
+    /**
+     * @throws AuthException
+     */
+    public function execute(User|null $user): User|AuthException
     {
         $auth = $this->isAuth($this->request->getHeader());
 
         if (!$auth) {
             throw new AuthException('Not authenticated');
             exit();
-        };
-        $user = $userAuth ?? new User();
+        }
+        $user = $user ?? new User();
 
-        $user->userId = $auth['id'];
+        $user->userId = (int)$auth['id'];
 
         return $user;
     }
@@ -35,18 +42,18 @@ class AuthMiddelware extends Middelware
     public function isAuth($headers)
     {
         $token = $this->checkHeaderAuth($headers);
-
         return $token ? JwtAuth::isAuth($token[1]) : false;
     }
 
-    function checkHeaderAuth($headers)
+    function checkHeaderAuth($headers): array|bool
     {
         if (
             isset($headers['Authorization']) &&
             $headers['Authorization'] !== "undefined" &&
             preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $token)
-        ) {
+        )
+
             return $token;
-        }
+        return false;
     }
 }

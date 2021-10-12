@@ -20,6 +20,9 @@ abstract class Model extends Database
 
     abstract function rules(): array;
 
+    /**
+     * @throws NotFoundException
+     */
     public function loadData($data)
     {
         foreach ($data as $key => $value) {
@@ -32,7 +35,7 @@ abstract class Model extends Database
         }
     }
 
-    public function validate()
+    public function validate(): bool
     {
         foreach ($this->rules() as $field => $rules) {
 
@@ -55,13 +58,17 @@ abstract class Model extends Database
     public function addError(string $field, string $rule, $params = [])
     {
         $message = $this->errorMessage()[$rule] ?? '';
-        foreach ($params as $key => $value) {
-            $message = str_replace("{{$key}}", $value, $message);
+        foreach ($params as $value) {
+            $message = str_replace("", $value, $message);
         }
         $this->errors = ["error" => true, "message" => $field . " " . $message];
     }
 
-    public function errorMessage()
+    /**
+     * @return string[]
+     * @noinspection PhpArrayShapeAttributeCanBeAddedInspection
+     */
+    public function errorMessage(): array
     {
         return [
             self::RULE_REQUIRED => 'Campo obbligatorio',

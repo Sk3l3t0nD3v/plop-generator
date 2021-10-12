@@ -2,21 +2,25 @@
 
 namespace app\core;
 
+use app\exceptions\DbException;
 use app\exceptions\NotFoundException;
-use \PDO;
+use Exception;
+use PDO;
 
-
-require_once __DIR__ . "/../vendor/jwt/jwt.php";
 
 class JwtAuth
 {
 
-    static private $secretKey = "test123";
+    static private string $secretKey = "test123";
 
     function __construct()
     {
     }
-    static function createUserToken(string $username, string $password)
+
+    /**
+     * @throws NotFoundException
+     */
+    static function createUserToken(string $username, string $password) :NotFoundException|DbException|array
     {
         $db = Application::$app->database;
 
@@ -46,8 +50,7 @@ class JwtAuth
             "userId" => $userId
         ];
 
-        $token = JWT::encode($payload, self::$secretKey);
-        return $token;
+        return JWT::encode($payload, self::$secretKey);
     }
     static function isAuth(string $token)
     {
@@ -60,7 +63,7 @@ class JwtAuth
             $stm->bindValue(':userId', $userId);
             $db->isExecute($stm);
             return $stm->rowCount() ? $stm->fetch(PDO::FETCH_ASSOC) : false;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo "Error:" . $e->getMessage();
             return false;
         }

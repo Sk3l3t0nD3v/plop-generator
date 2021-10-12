@@ -29,7 +29,7 @@ module.exports = [
       { name: 'Application', value: 'Application' },
       { name: 'Controller', value: 'Controller' },
       { name: 'Database', value: 'Database' },
-      { name: 'Middelware', value: 'Middelware' },
+      { name: 'Middleware', value: 'Middleware' },
       { name: 'JwtAuth', value: 'JwtAuth' },
       { name: 'Model', value: 'Model' },
       { name: 'Request', value: 'Request' },
@@ -61,11 +61,11 @@ module.exports = [
   },
   {
     type: 'checkbox',
-    name: 'middelware',
-    message: 'Scegli i componenti MIDDELWARE da creare',
+    name: 'middleware',
+    message: 'Scegli i componenti MIDDLEWARE da creare',
     choices: [
-      { name: 'Auth', value: 'AuthMiddelware' },
-      { name: 'Admin', value: 'AdminMiddelware' },
+      { name: 'Auth', value: 'AuthMiddleware' },
+      { name: 'Admin', value: 'AdminMiddleware' },
     ],
   },
   {

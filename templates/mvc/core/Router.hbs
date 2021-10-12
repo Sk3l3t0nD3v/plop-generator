@@ -11,29 +11,29 @@ class Router
     {
     }
 
-    function resolve()
+    function resolve():void
     {
         $user = null;
         $path = $this->request->getPath();
         $method = $this->request->method();
         if (!isset($this->routes[$method][$path])) {
             Application::$app->response->setStatusCode(404);
-            return 'Route Not Found';
+            return ;
         }
         $callback = $this->routes[$method][$path]['callback'] ?? false;
-        $middelwares = $this->routes[$method][$path]['middelwares'];
+        $middlewares = $this->routes[$method][$path]['middlewares'];
 
         if ($callback === false) {
             Application::$app->response->setStatusCode(404);
-            return 'Not Found';
+            return ;
         }
         if (is_array($callback)) {
 
             $callback[0] = Application::$app->controller = new $callback[0]($this->request);
 
-            if (count($middelwares) > 0) {
-                foreach ($middelwares as $middelware)
-                    $user = (new $middelware($this->request))->execute($user);
+            if (count($middlewares) > 0) {
+                foreach ($middlewares as $middleware)
+                    $user = (new $middleware($this->request))->execute($user);
             }
         }
 
@@ -41,15 +41,15 @@ class Router
     }
 
 
-    function get(string $path, array $controllers, array $middelwares = [])
+    function get(string $path, array $controllers, array $middlewares = [])
     {
         $this->routes['get'][$path]['callback'] = $controllers;
-        $this->routes['get'][$path]['middelwares'] = $middelwares;
+        $this->routes['get'][$path]['middlewares'] = $middlewares;
     }
-    function post($path, array $controllers, array $middelwares = [])
+    function post($path, array $controllers, array $middlewares = [])
     {
 
         $this->routes['post'][$path]['callback'] = $controllers;
-        $this->routes['post'][$path]['middelwares'] = $middelwares;
+        $this->routes['post'][$path]['middlewares'] = $middlewares;
     }
 }

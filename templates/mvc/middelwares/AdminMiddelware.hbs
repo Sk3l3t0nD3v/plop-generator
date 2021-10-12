@@ -1,14 +1,14 @@
 <?php
 
 
-namespace app\middelwares;
+namespace app\middlewares;
 
-use app\core\Middelware;
+use app\core\Middleware;
 use app\core\Request;
 use app\exceptions\AuthException;
 use app\models\User;
 
-class AdminMiddelware extends Middelware
+class AdminMiddleware extends Middleware
 {
     protected Request $request;
     function __construct(Request $request)
@@ -16,13 +16,12 @@ class AdminMiddelware extends Middelware
         $this->request = $request;
     }
 
-    public function execute(User $user)
+    /**
+     * @throws AuthException
+     */
+    public function execute(User|null $user): User|AuthException
     {
-        return $user->role == 'admin' ? $user : $this->showError();
+        return $user->role == 'admin' ? $user : throw new AuthException('Not Admin ');
     }
-    private function showError()
-    {
-        throw new AuthException('Not Admin ');
-        exit();
-    }
+
 }

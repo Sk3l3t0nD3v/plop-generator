@@ -6,17 +6,19 @@ namespace app\core;
 
 class Controller
 {
-    protected array $middelwares = [];
+    protected array $middlewares = [];
+
     function __construct()
     {
     }
 
-    function addMiddelware(array $middelwares)
+    public function addMiddleware(Middleware $middleware)
     {
-        $this->middelwares = array_merge($this->middelwares, $middelwares);
+        array_push($this->middlewares, $middleware);
     }
-    public function getMiddelware(): array
+
+    public function getMiddleware(): array
     {
-        return $this->middelwares;
+        return $this->middlewares;
     }
 }
