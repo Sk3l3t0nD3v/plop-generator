@@ -6,13 +6,16 @@ namespace app\core;
 
 class Controller
 {
-    protected array $middlewares = [];
 
     function __construct()
     {
     }
 
-    public function addMiddleware(Middleware $middleware)
+    /**
+     *DEPRECATED add middlewares in route declaration of index.php
+     */
+    /*protected array $middlewares = [];*/
+   /* public function addMiddleware(Middleware $middleware)
     {
         array_push($this->middlewares, $middleware);
     }
@@ -20,5 +23,5 @@ class Controller
     public function getMiddleware(): array
     {
         return $this->middlewares;
-    }
+    }*/
 }
